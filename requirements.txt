@@ -1,0 +1,7 @@
+# runtime deps for the ranking step (rank.py). kept minimal on purpose:
+# the 5 minute cpu budget runs over precomputed artifacts, no torch or network.
+numpy>=1.26
+scipy>=1.11
+pandas>=2.1
+pyarrow>=14
+pyyaml>=6
