@@ -1,0 +1,94 @@
+# structured reading of the job description. drives both the llm judge prompt
+# and the deterministic guardrails. terms are lowercase for case-insensitive matching.
+
+role:
+  title: Senior AI Engineer
+  company: Redrob AI
+  preferred_locations: [pune, noida]
+  experience_band: { min: 5, max: 9, ideal_min: 6, ideal_max: 8 }
+  summary: >
+    owns the ranking, retrieval and matching intelligence layer. wants real depth
+    in modern ml systems together with a shipper attitude, not a researcher who has
+    never shipped or a generalist who only wires frameworks together.
+
+must_haves:
+  - name: embeddings_retrieval
+    weight: 1.0
+    terms: [embeddings, embedding, sentence-transformers, sentence transformers, bge, e5,
+            openai embeddings, dense retrieval, dense vector, semantic search]
+  - name: vector_db_hybrid_search
+    weight: 1.0
+    terms: [vector database, vector db, pinecone, weaviate, qdrant, milvus, opensearch,
+            elasticsearch, faiss, hybrid search, hybrid retrieval, bm25, hnsw]
+  - name: ranking_search_recsys
+    weight: 1.0
+    terms: [ranking, learning to rank, learning-to-rank, ltr, search relevance,
+            recommendation, recommender, personalization, relevance ranking, search engine,
+            retrieval, re-ranker, reranker]
+  - name: evaluation_frameworks
+    weight: 0.9
+    terms: [ndcg, mrr, "map", offline evaluation, offline metrics, a/b test, ab test,
+            online experiment, eval framework, evaluation framework, offline-to-online]
+  - name: strong_python
+    weight: 0.5
+    terms: [python]
+
+nice_to_haves:
+  - name: llm_finetuning
+    weight: 0.4
+    terms: [lora, qlora, peft, fine-tuning, fine tuning, fine-tune, instruction tuning]
+  - name: ltr_models
+    weight: 0.4
+    terms: [xgboost, lightgbm, lambdamart, gradient boosted, neural ranker, gbdt]
+  - name: hrtech_marketplace
+    weight: 0.4
+    terms: [hr-tech, hrtech, recruiting, recruitment, marketplace, talent, candidate-jd]
+  - name: distributed_inference
+    weight: 0.3
+    terms: [distributed systems, large-scale, inference optimization, serving, low latency]
+  - name: open_source
+    weight: 0.3
+    terms: [open source, open-source, oss, contributor, maintainer, published, talk, paper]
+
+disqualifiers:
+  - name: research_only_no_production
+    description: pure research or academic roles with no production deployment
+  - name: langchain_only_recent
+    description: ai experience is only recent langchain wrappers over openai, no prior ml
+  - name: no_code_18_months
+    description: senior who moved into architecture or tech lead and stopped writing code
+  - name: title_chaser
+    description: switches companies about every 1.5 years optimizing for seniority titles
+  - name: framework_enthusiast
+    description: tutorials and demo projects rather than systems they actually ran
+  - name: consulting_only_career
+    description: entire career at services or consulting firms with no product company
+  - name: cv_speech_robotics_only
+    description: primary expertise in vision speech or robotics without nlp or retrieval
+  - name: closed_source_no_validation
+    description: only closed proprietary work for many years with no external validation
+
+domains:
+  positive: [nlp, natural language, information retrieval, retrieval, ranking, recommendation,
+             recommender, search, semantic search, embeddings, llm, language model]
+  negative: [computer vision, image classification, object detection, segmentation,
+             speech recognition, speech synthesis, tts, asr, robotics, slam, autonomous driving]
+
+companies:
+  consulting: [infosys, wipro, tcs, tata consultancy, capgemini, hcl, accenture, cognizant,
+               tech mahindra, mphasis, genpact, mindtree, ltimindtree, lti]
+  product: [swiggy, zomato, flipkart, razorpay, cred, meesho, nykaa, inmobi, byju, policybazaar,
+            ola, zoho, vedantu, paytm, unacademy, pharmeasy, upgrad, freshworks, phonepe, dream11,
+            glance, google, meta, apple, amazon, microsoft, netflix, uber, mad street den, yellow.ai,
+            aganitha, pied piper, hooli, stark industries, wayne enterprises, globex, initech, acme]
+
+location:
+  positive_country: india
+  tier1_cities: [pune, noida, hyderabad, mumbai, bengaluru, bangalore, delhi, new delhi,
+                 gurgaon, gurugram, chennai, kolkata, trivandrum]
+  no_visa_sponsorship: true
+
+logistics:
+  notice_period_good_days: 30
+  notice_period_buyout_days: 30
+  inactive_penalty_days: 180
