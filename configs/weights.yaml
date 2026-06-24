@@ -1,21 +1,25 @@
-# rubric scoring weights. tuned later against the oracle labels.
-# component weights sum to 1.0 so the base score stays in [0, 1].
-components:
-  role_fit: 0.20
-  must_have_evidence: 0.20
-  ranking_evidence: 0.20
-  experience_fit: 0.12
-  domain_fit: 0.08
-  product_ratio: 0.08
-  location_fit: 0.08
-  external_validation: 0.04
+# the offline judge grade is the primary relevance signal; structured modifiers
+# order candidates within a relevance tier, which is where the top-10 is decided.
+
+judge:
+  summary_weight: 0.6
+  description_weight: 0.4
+
+# modifier factor = floor + (1 - floor) * weighted(components). stays in [floor, 1].
+modifier:
+  floor: 0.6
+  components:
+    experience_fit: 0.50
+    location_fit: 0.20
+    product_ratio: 0.15
+    external_validation: 0.15
 
 # multiplicative penalties for the job description disqualifiers.
 gates:
-  consulting_only: 0.35
-  research_only: 0.45
-  non_india: 0.55
-  title_chaser: 0.80
+  consulting_only: 0.50
+  research_only: 0.60
+  non_india: 0.60
+  title_chaser: 0.85
 
 # bounded availability modifier so behaviour never dominates fit.
 behavioral:
@@ -32,3 +36,11 @@ behavioral:
   notice_long_mult: 0.97
   floor: 0.55
   ceil: 1.10
+
+# used only when a candidate's template has no judge grade (new/unseen data).
+fallback_components:
+  role_fit: 0.30
+  must_have_evidence: 0.25
+  ranking_evidence: 0.25
+  experience_fit: 0.10
+  domain_fit: 0.10

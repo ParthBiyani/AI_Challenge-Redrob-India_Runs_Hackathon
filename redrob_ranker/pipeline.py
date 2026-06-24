@@ -4,14 +4,14 @@ from redrob_ranker.data import iter_candidates
 from redrob_ranker.features import extract_features
 from redrob_ranker.jd_spec import JDSpec
 from redrob_ranker.reasoning import reason_for
-from redrob_ranker.scoring import load_weights, score_candidate
+from redrob_ranker.scoring import load_grades, load_weights, score_candidate
 
 HEADER = ["candidate_id", "rank", "score", "reasoning"]
 
 
-def rank_candidates(candidates_path, spec, weights, top_n=100):
+def rank_candidates(candidates_path, spec, weights, grades, top_n=100):
     scored = [
-        (round(score_candidate(c, spec, weights), 6), c["candidate_id"])
+        (round(score_candidate(c, spec, weights, grades), 6), c["candidate_id"])
         for c in iter_candidates(candidates_path)
     ]
     scored.sort(key=lambda x: (-x[0], x[1]))
@@ -34,17 +34,17 @@ def build_reasons(candidates_path, spec, ranked):
         for c in iter_candidates(candidates_path)
         if c["candidate_id"] in top_ids
     }
-    reasons = {}
-    for rank, (_, cid) in enumerate(ranked, start=1):
-        c = objects[cid]
-        reasons[cid] = reason_for(c, extract_features(c, spec), rank)
-    return reasons
+    return {
+        cid: reason_for(objects[cid], extract_features(objects[cid], spec), rank)
+        for rank, (_, cid) in enumerate(ranked, start=1)
+    }
 
 
 def run(candidates_path, out_path, top_n=100):
     spec = JDSpec.load()
     weights = load_weights()
-    ranked = rank_candidates(candidates_path, spec, weights, top_n)
+    grades = load_grades()
+    ranked = rank_candidates(candidates_path, spec, weights, grades, top_n)
     reasons = build_reasons(candidates_path, spec, ranked)
     write_submission(ranked, out_path, reasons)
     return ranked

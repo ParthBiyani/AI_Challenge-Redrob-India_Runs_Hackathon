@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import yaml
@@ -5,9 +6,11 @@ import yaml
 from redrob_ranker.features import extract_features
 from redrob_ranker.integrity import is_honeypot
 from redrob_ranker.jd_spec import JDSpec
+from redrob_ranker.text import normalize_template
 from redrob_ranker.timeline import AS_OF, parse_date
 
 WEIGHTS_PATH = Path(__file__).resolve().parents[1] / "configs" / "weights.yaml"
+GRADES_PATH = Path(__file__).resolve().parents[1] / "eval" / "template_grades.json"
 
 
 def load_weights(path: str | Path = WEIGHTS_PATH) -> dict:
@@ -15,8 +18,44 @@ def load_weights(path: str | Path = WEIGHTS_PATH) -> dict:
         return yaml.safe_load(f)
 
 
+def load_grades(path: str | Path = GRADES_PATH) -> dict:
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
+
+
 def _clamp(x: float, lo: float, hi: float) -> float:
     return max(lo, min(hi, x))
+
+
+def judge_relevance(candidate: dict, grades: dict, params: dict) -> float | None:
+    summaries, descriptions = grades["summaries"], grades["descriptions"]
+    summary_grade = summaries.get(normalize_template(candidate["profile"].get("summary", "")))
+    desc = [descriptions.get(normalize_template(j.get("description", ""))) for j in candidate["career_history"]]
+    desc = [g for g in desc if g is not None]
+    best_desc = max(desc) if desc else None
+    if summary_grade is None and best_desc is None:
+        return None
+    s = summary_grade if summary_grade is not None else 0
+    d = best_desc if best_desc is not None else s
+    return (params["summary_weight"] * s + params["description_weight"] * d) / 5.0
+
+
+def fallback_relevance(features: dict, weights: dict) -> float:
+    return sum(w * features[name] for name, w in weights["fallback_components"].items())
+
+
+def modifier_factor(features: dict, weights: dict) -> float:
+    score = sum(w * features[name] for name, w in weights["modifier"]["components"].items())
+    floor = weights["modifier"]["floor"]
+    return floor + (1 - floor) * score
+
+
+def gate_penalty(features: dict, weights: dict) -> float:
+    penalty = 1.0
+    for name, mult in weights["gates"].items():
+        if features.get(name):
+            penalty *= mult
+    return penalty
 
 
 def availability_multiplier(candidate: dict, params: dict, as_of=AS_OF) -> float:
@@ -41,18 +80,16 @@ def availability_multiplier(candidate: dict, params: dict, as_of=AS_OF) -> float
     return _clamp(mult, params["floor"], params["ceil"])
 
 
-def rubric_score(features: dict, weights: dict) -> float:
-    base = sum(w * features[name] for name, w in weights["components"].items())
-    gate = 1.0
-    for name, mult in weights["gates"].items():
-        if features.get(name):
-            gate *= mult
-    return base * gate
-
-
-def score_candidate(candidate: dict, spec: JDSpec, weights: dict, as_of=AS_OF) -> float:
+def score_candidate(candidate: dict, spec: JDSpec, weights: dict, grades: dict, as_of=AS_OF) -> float:
     if is_honeypot(candidate, as_of):
         return 0.0
     features = extract_features(candidate, spec)
-    base = rubric_score(features, weights)
-    return base * availability_multiplier(candidate, weights["behavioral"], as_of)
+    relevance = judge_relevance(candidate, grades, weights["judge"])
+    if relevance is None:
+        relevance = fallback_relevance(features, weights)
+    return (
+        relevance
+        * modifier_factor(features, weights)
+        * availability_multiplier(candidate, weights["behavioral"], as_of)
+        * gate_penalty(features, weights)
+    )
