@@ -1,0 +1,46 @@
+{
+  "full": {
+    "ndcg@10": 1.0,
+    "ndcg@50": 0.9694602212493507,
+    "map": 1.0,
+    "p@10": 1.0,
+    "p@5": 1.0,
+    "mrr": 1.0,
+    "composite": 0.9908380663748052,
+    "honeypots_top100": 0,
+    "honeypots_top10": 0
+  },
+  "no_integrity": {
+    "ndcg@10": 0.8415908474314975,
+    "ndcg@50": 0.8995172153015599,
+    "map": 0.9264085847262292,
+    "p@10": 0.8,
+    "p@5": 0.8,
+    "mrr": 1.0,
+    "composite": 0.8696118760151511,
+    "honeypots_top100": 4,
+    "honeypots_top10": 2
+  },
+  "rubric_only": {
+    "ndcg@10": 0.8706287552867619,
+    "ndcg@50": 0.9175438893713451,
+    "map": 1.0,
+    "p@10": 1.0,
+    "p@5": 1.0,
+    "mrr": 1.0,
+    "composite": 0.9105775444547844,
+    "honeypots_top100": 0,
+    "honeypots_top10": 0
+  },
+  "judge_only": {
+    "ndcg@10": 1.0,
+    "ndcg@50": 1.0,
+    "map": 1.0,
+    "p@10": 1.0,
+    "p@5": 1.0,
+    "mrr": 1.0,
+    "composite": 1.0,
+    "honeypots_top100": 0,
+    "honeypots_top10": 0
+  }
+}
