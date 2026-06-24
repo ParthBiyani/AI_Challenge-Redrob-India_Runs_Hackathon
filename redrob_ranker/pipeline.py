@@ -1,7 +1,9 @@
 import csv
 
 from redrob_ranker.data import iter_candidates
+from redrob_ranker.features import extract_features
 from redrob_ranker.jd_spec import JDSpec
+from redrob_ranker.reasoning import reason_for
 from redrob_ranker.scoring import load_weights, score_candidate
 
 HEADER = ["candidate_id", "rank", "score", "reasoning"]
@@ -25,9 +27,24 @@ def write_submission(rows, out_path, reasons=None):
             writer.writerow([cid, rank, f"{score:.6f}", reasons.get(cid, "")])
 
 
+def build_reasons(candidates_path, spec, ranked):
+    top_ids = {cid for _, cid in ranked}
+    objects = {
+        c["candidate_id"]: c
+        for c in iter_candidates(candidates_path)
+        if c["candidate_id"] in top_ids
+    }
+    reasons = {}
+    for rank, (_, cid) in enumerate(ranked, start=1):
+        c = objects[cid]
+        reasons[cid] = reason_for(c, extract_features(c, spec), rank)
+    return reasons
+
+
 def run(candidates_path, out_path, top_n=100):
     spec = JDSpec.load()
     weights = load_weights()
-    rows = rank_candidates(candidates_path, spec, weights, top_n)
-    write_submission(rows, out_path)
-    return rows
+    ranked = rank_candidates(candidates_path, spec, weights, top_n)
+    reasons = build_reasons(candidates_path, spec, ranked)
+    write_submission(ranked, out_path, reasons)
+    return ranked
