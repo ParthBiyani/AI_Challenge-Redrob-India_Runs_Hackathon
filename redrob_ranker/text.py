@@ -1,3 +1,13 @@
+import re
+
+_NUMBER = re.compile(r"[0-9]+(?:\.[0-9]+)?")
+_SPACE = re.compile(r"\s+")
+
+
+def normalize_template(text: str) -> str:
+    return _SPACE.sub(" ", _NUMBER.sub("#", text.lower())).strip()
+
+
 def segments(candidate: dict) -> list[tuple[str, str]]:
     p = candidate["profile"]
     out: list[tuple[str, str]] = []
