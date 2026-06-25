@@ -1,0 +1,12 @@
+.git
+.github
+__pycache__
+*.pyc
+.venv
+.pytest_cache
+.ruff_cache
+.mypy_cache
+candidates.jsonl
+candidates.jsonl.gz
+submission.csv
+scratch
