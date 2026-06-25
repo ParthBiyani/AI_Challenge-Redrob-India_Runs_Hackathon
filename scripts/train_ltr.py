@@ -6,8 +6,6 @@ import lightgbm as lgb
 import numpy as np
 from sklearn.model_selection import train_test_split
 
-warnings.filterwarnings("ignore", category=UserWarning)
-
 from redrob_ranker.data import iter_candidates
 from redrob_ranker.evaluate import ndcg_at_k
 from redrob_ranker.features import extract_features
@@ -15,6 +13,8 @@ from redrob_ranker.integrity import is_honeypot
 from redrob_ranker.jd_spec import JDSpec
 from redrob_ranker.ltr import FEATURE_NAMES, feature_vector
 from redrob_ranker.scoring import judge_relevance, load_grades
+
+warnings.filterwarnings("ignore", category=UserWarning)
 
 REPO = Path(__file__).resolve().parents[1]
 JUDGE_PARAMS = {"summary_weight": 0.6, "description_weight": 0.4}
