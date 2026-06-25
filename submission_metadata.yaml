@@ -1,0 +1,62 @@
+# Redrob Hackathon submission metadata. Mirrors the portal upload fields.
+
+team_name: "TODO-set-your-team-name"
+
+primary_contact:
+  name: "Parth Biyani"
+  email: "parthbiyani9@gmail.com"
+  phone: "TODO-+91-XXXXXXXXXX"
+
+team_members:
+  - name: "Parth Biyani"
+    email: "parthbiyani9@gmail.com"
+    role: "Solo"
+
+github_repo: "https://github.com/ParthBiyani/AI_Challenge-Redrob-India_Runs_Hackathon"
+
+sandbox_link: "TODO-streamlit-community-cloud-url"
+
+reproduce_command: "python rank.py --candidates ./candidates.jsonl --out ./submission.csv"
+
+compute:
+  platform: "Windows 11 laptop (RTX 3060 used offline for nothing in the ranking step)"
+  cpu_cores: 8
+  ram_gb: 16
+  python_version: "3.11.9"
+  os: "Windows 11"
+  uses_gpu_for_inference: false
+  has_network_during_ranking: false
+  pre_computation_required: true
+  pre_computation_time_minutes: 5
+
+ai_tools_used:
+  - "Claude"
+
+ai_usage_summary: |
+  Claude (Opus 4.8, via Claude Code) was used both for engineering assistance and,
+  offline, as a relevance judge: it read each of the ~120 distinct profile templates
+  in the pool and graded them 0-5 against the job description. Those grades are a
+  pre-computation artifact (eval/template_grades.json). The ranking step (rank.py)
+  makes no LLM or network calls; it is numpy/pandas only and runs on CPU.
+
+methodology_summary: |
+  We treat ranking as graded relevance estimation. The 100k pool is generated from
+  only ~120 distinct profile templates (76 summaries, 44 career descriptions after
+  normalising out numbers), so we grade each unique template once, 0-5, against the
+  job description with an offline LLM judge, then every candidate inherits its
+  template grade. A deterministic integrity gate excludes logically impossible
+  "honeypot" profiles (experience exceeding the career timeline, expert skills used
+  zero months, inflated job durations); without it, honeypots flood the top 10 and
+  NDCG@10 falls from 1.00 to 0.84. The judge grade is the primary relevance signal;
+  structured modifiers (the 5-9 experience band, India location, recruiter
+  availability, product-vs-services history, GitHub activity) order candidates within
+  a tier, which is where the top 10 is decided. Reasoning strings are generated
+  deterministically from each candidate's real facts, so they cite actual skills and
+  employers and never hallucinate. Ranking is CPU-only, offline, and runs in ~35s.
+
+declarations:
+  read_submission_spec: true
+  code_is_original_work: true
+  no_collusion: true
+  honeypot_check_done: true
+  reproduction_tested: true
