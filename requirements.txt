@@ -1,7 +1,8 @@
-# runtime deps for the ranking step (rank.py). kept minimal on purpose:
-# the 5 minute cpu budget runs over precomputed artifacts, no torch or network.
+# the ranking step (rank.py) needs only numpy/scipy/pandas/pyarrow/pyyaml and no
+# network. streamlit is for the demo app only and is never imported by rank.py.
 numpy>=1.26
 scipy>=1.11
 pandas>=2.1
 pyarrow>=14
 pyyaml>=6
+streamlit>=1.36
