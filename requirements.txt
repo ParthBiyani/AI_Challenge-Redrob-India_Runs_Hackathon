@@ -1,8 +1,8 @@
 # the ranking step (rank.py) needs only numpy/scipy/pandas/pyarrow/pyyaml and no
 # network. streamlit is for the demo app only and is never imported by rank.py.
-numpy>=1.26
-scipy>=1.11
-pandas>=2.1
-pyarrow>=14
-pyyaml>=6
-streamlit>=1.36
+numpy==2.4.6
+scipy==1.17.1
+pandas==3.0.3
+pyarrow==24.0.0
+pyyaml==6.0.3
+streamlit==1.58.0
